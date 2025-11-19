@@ -1,0 +1,1312 @@
+﻿--
+-- PostgreSQL database dump
+--
+
+\restrict wHtLdpPRcpSfEHT9cpuJ6Sm59NYHgoaxX7Unah5VmSjngIBgjyNexG6q8nmvoiV
+
+-- Dumped from database version 18.0
+-- Dumped by pg_dump version 18.0
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET transaction_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
+SET check_function_bodies = false;
+SET xmloption = content;
+SET client_min_messages = warning;
+SET row_security = off;
+
+SET default_tablespace = '';
+
+SET default_table_access_method = heap;
+
+--
+-- Name: carrello; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.carrello (
+    id_carrello integer NOT NULL,
+    id_utente integer NOT NULL,
+    id_prodotto integer NOT NULL,
+    quantita integer DEFAULT 1 NOT NULL,
+    data_aggiunta timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+);
+
+
+ALTER TABLE public.carrello OWNER TO postgres;
+
+--
+-- Name: carrello_id_carrello_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.carrello_id_carrello_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.carrello_id_carrello_seq OWNER TO postgres;
+
+--
+-- Name: carrello_id_carrello_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.carrello_id_carrello_seq OWNED BY public.carrello.id_carrello;
+
+
+--
+-- Name: carrello_pacchetto; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.carrello_pacchetto (
+    id_utente integer NOT NULL,
+    id_pacchetto integer NOT NULL,
+    quantita integer DEFAULT 1 NOT NULL
+);
+
+
+ALTER TABLE public.carrello_pacchetto OWNER TO postgres;
+
+--
+-- Name: categoria; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.categoria (
+    id_categoria integer NOT NULL,
+    nome character varying(100) NOT NULL,
+    descrizione text,
+    immagine character varying(255)
+);
+
+
+ALTER TABLE public.categoria OWNER TO postgres;
+
+--
+-- Name: categoria_id_categoria_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.categoria_id_categoria_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.categoria_id_categoria_seq OWNER TO postgres;
+
+--
+-- Name: categoria_id_categoria_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.categoria_id_categoria_seq OWNED BY public.categoria.id_categoria;
+
+
+--
+-- Name: coupon; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.coupon (
+    id integer NOT NULL,
+    codice character varying(50) NOT NULL,
+    descrizione text,
+    tipo_sconto character varying(20) NOT NULL,
+    valore_sconto numeric(10,2) NOT NULL,
+    importo_minimo numeric(10,2) DEFAULT 0,
+    data_inizio date NOT NULL,
+    data_scadenza date NOT NULL,
+    usi_massimi integer,
+    usi_attuali integer DEFAULT 0,
+    attivo boolean DEFAULT true,
+    created_at timestamp without time zone DEFAULT now(),
+    uso_singolo boolean DEFAULT false
+);
+
+
+ALTER TABLE public.coupon OWNER TO postgres;
+
+--
+-- Name: coupon_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.coupon_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.coupon_id_seq OWNER TO postgres;
+
+--
+-- Name: coupon_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.coupon_id_seq OWNED BY public.coupon.id;
+
+
+--
+-- Name: coupon_utilizzi; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.coupon_utilizzi (
+    id integer NOT NULL,
+    coupon_id integer,
+    user_id integer,
+    data_utilizzo timestamp without time zone DEFAULT now()
+);
+
+
+ALTER TABLE public.coupon_utilizzi OWNER TO postgres;
+
+--
+-- Name: coupon_utilizzi_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.coupon_utilizzi_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.coupon_utilizzi_id_seq OWNER TO postgres;
+
+--
+-- Name: coupon_utilizzi_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.coupon_utilizzi_id_seq OWNED BY public.coupon_utilizzi.id;
+
+
+--
+-- Name: indirizzi; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.indirizzi (
+    id integer NOT NULL,
+    user_id integer,
+    indirizzo text NOT NULL,
+    citta character varying(100),
+    cap character varying(10),
+    provincia character varying(100),
+    paese character varying(100),
+    predefinito boolean DEFAULT false,
+    destinatario character varying(128) NOT NULL,
+    telefono character varying(32)
+);
+
+
+ALTER TABLE public.indirizzi OWNER TO postgres;
+
+--
+-- Name: indirizzi_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.indirizzi_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.indirizzi_id_seq OWNER TO postgres;
+
+--
+-- Name: indirizzi_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.indirizzi_id_seq OWNED BY public.indirizzi.id;
+
+
+--
+-- Name: marchio; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.marchio (
+    id_marchio integer NOT NULL,
+    nome character varying(100) NOT NULL
+);
+
+
+ALTER TABLE public.marchio OWNER TO postgres;
+
+--
+-- Name: marchio_id_marchio_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.marchio_id_marchio_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.marchio_id_marchio_seq OWNER TO postgres;
+
+--
+-- Name: marchio_id_marchio_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.marchio_id_marchio_seq OWNED BY public.marchio.id_marchio;
+
+
+--
+-- Name: ordine_prodotti; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.ordine_prodotti (
+    id integer NOT NULL,
+    ordine_id integer,
+    prodotto_id integer,
+    quantita integer DEFAULT 1 NOT NULL,
+    prezzo numeric(10,2) DEFAULT 0.00 NOT NULL,
+    created_at timestamp without time zone DEFAULT now()
+);
+
+
+ALTER TABLE public.ordine_prodotti OWNER TO postgres;
+
+--
+-- Name: ordine_prodotti_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.ordine_prodotti_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.ordine_prodotti_id_seq OWNER TO postgres;
+
+--
+-- Name: ordine_prodotti_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.ordine_prodotti_id_seq OWNED BY public.ordine_prodotti.id;
+
+
+--
+-- Name: ordini; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.ordini (
+    id integer NOT NULL,
+    user_id integer,
+    indirizzo_consegna text NOT NULL,
+    totale numeric(10,2) NOT NULL,
+    stato character varying(20) DEFAULT 'in_attesa'::character varying,
+    data_ordine timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    coupon_id integer,
+    sconto_coupon numeric(10,2) DEFAULT 0,
+    totale_originale numeric(10,2),
+    metodo_pagamento character varying(50),
+    nome_intestatario character varying(255),
+    numero_carta_mascherato character varying(20),
+    coupon_utilizzato character varying(50)
+);
+
+
+ALTER TABLE public.ordini OWNER TO postgres;
+
+--
+-- Name: ordini_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.ordini_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.ordini_id_seq OWNER TO postgres;
+
+--
+-- Name: ordini_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.ordini_id_seq OWNED BY public.ordini.id;
+
+
+--
+-- Name: pacchetto_tematico; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.pacchetto_tematico (
+    id_pacchetto integer NOT NULL,
+    nome character varying(100) NOT NULL,
+    descrizione text,
+    prezzo_totale numeric(10,2),
+    immagine character varying(255)
+);
+
+
+ALTER TABLE public.pacchetto_tematico OWNER TO postgres;
+
+--
+-- Name: pacchetto_tematico_id_pacchetto_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.pacchetto_tematico_id_pacchetto_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.pacchetto_tematico_id_pacchetto_seq OWNER TO postgres;
+
+--
+-- Name: pacchetto_tematico_id_pacchetto_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.pacchetto_tematico_id_pacchetto_seq OWNED BY public.pacchetto_tematico.id_pacchetto;
+
+
+--
+-- Name: prodotto; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.prodotto (
+    id_prodotto integer NOT NULL,
+    nome character varying(150) NOT NULL,
+    descrizione text,
+    prezzo numeric(10,2) NOT NULL,
+    quantita_disponibile integer DEFAULT 0 NOT NULL,
+    id_categoria integer,
+    id_marchio integer,
+    immagine character varying(255),
+    in_vetrina boolean DEFAULT false,
+    promo boolean DEFAULT false,
+    bloccato boolean DEFAULT false,
+    prezzo_scontato numeric
+);
+
+
+ALTER TABLE public.prodotto OWNER TO postgres;
+
+--
+-- Name: prodotto_id_prodotto_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.prodotto_id_prodotto_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.prodotto_id_prodotto_seq OWNER TO postgres;
+
+--
+-- Name: prodotto_id_prodotto_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.prodotto_id_prodotto_seq OWNED BY public.prodotto.id_prodotto;
+
+
+--
+-- Name: prodotto_pacchetto; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.prodotto_pacchetto (
+    id_pacchetto integer NOT NULL,
+    id_prodotto integer NOT NULL,
+    quantita integer DEFAULT 1
+);
+
+
+ALTER TABLE public.prodotto_pacchetto OWNER TO postgres;
+
+--
+-- Name: tracking_ordine; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.tracking_ordine (
+    id integer NOT NULL,
+    id_ordine integer,
+    stato character varying(32) NOT NULL,
+    corriere character varying(64),
+    codice_spedizione character varying(64),
+    dettagli_pacco text,
+    data_aggiornamento timestamp without time zone DEFAULT now(),
+    indirizzo_spedizione character varying(256)
+);
+
+
+ALTER TABLE public.tracking_ordine OWNER TO postgres;
+
+--
+-- Name: tracking_ordine_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.tracking_ordine_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.tracking_ordine_id_seq OWNER TO postgres;
+
+--
+-- Name: tracking_ordine_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.tracking_ordine_id_seq OWNED BY public.tracking_ordine.id;
+
+
+--
+-- Name: utenti; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.utenti (
+    id integer NOT NULL,
+    nome character varying(50) NOT NULL,
+    cognome character varying(50) NOT NULL,
+    email character varying(100) NOT NULL,
+    password character varying(255) NOT NULL,
+    created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    is_blocked boolean DEFAULT false,
+    telefono character varying(20),
+    data_nascita date,
+    sesso character varying(10),
+    ruolo character varying(20) DEFAULT 'user'::character varying,
+    CONSTRAINT utenti_sesso_check CHECK (((sesso)::text = ANY ((ARRAY['Maschio'::character varying, 'Femmina'::character varying, 'Altro'::character varying, NULL::character varying])::text[])))
+);
+
+
+ALTER TABLE public.utenti OWNER TO postgres;
+
+--
+-- Name: utenti_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.utenti_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.utenti_id_seq OWNER TO postgres;
+
+--
+-- Name: utenti_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.utenti_id_seq OWNED BY public.utenti.id;
+
+
+--
+-- Name: visualizzazioni; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.visualizzazioni (
+    id integer NOT NULL,
+    user_id integer,
+    prodotto_id integer,
+    visualizzato_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+);
+
+
+ALTER TABLE public.visualizzazioni OWNER TO postgres;
+
+--
+-- Name: visualizzazioni_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.visualizzazioni_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.visualizzazioni_id_seq OWNER TO postgres;
+
+--
+-- Name: visualizzazioni_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.visualizzazioni_id_seq OWNED BY public.visualizzazioni.id;
+
+
+--
+-- Name: wish_list; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.wish_list (
+    id integer NOT NULL,
+    user_id integer,
+    prodotto_id integer,
+    aggiunto_il timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    quantita integer
+);
+
+
+ALTER TABLE public.wish_list OWNER TO postgres;
+
+--
+-- Name: wish_list_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.wish_list_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.wish_list_id_seq OWNER TO postgres;
+
+--
+-- Name: wish_list_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.wish_list_id_seq OWNED BY public.wish_list.id;
+
+
+--
+-- Name: carrello id_carrello; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.carrello ALTER COLUMN id_carrello SET DEFAULT nextval('public.carrello_id_carrello_seq'::regclass);
+
+
+--
+-- Name: categoria id_categoria; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.categoria ALTER COLUMN id_categoria SET DEFAULT nextval('public.categoria_id_categoria_seq'::regclass);
+
+
+--
+-- Name: coupon id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.coupon ALTER COLUMN id SET DEFAULT nextval('public.coupon_id_seq'::regclass);
+
+
+--
+-- Name: coupon_utilizzi id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.coupon_utilizzi ALTER COLUMN id SET DEFAULT nextval('public.coupon_utilizzi_id_seq'::regclass);
+
+
+--
+-- Name: indirizzi id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.indirizzi ALTER COLUMN id SET DEFAULT nextval('public.indirizzi_id_seq'::regclass);
+
+
+--
+-- Name: marchio id_marchio; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.marchio ALTER COLUMN id_marchio SET DEFAULT nextval('public.marchio_id_marchio_seq'::regclass);
+
+
+--
+-- Name: ordine_prodotti id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.ordine_prodotti ALTER COLUMN id SET DEFAULT nextval('public.ordine_prodotti_id_seq'::regclass);
+
+
+--
+-- Name: ordini id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.ordini ALTER COLUMN id SET DEFAULT nextval('public.ordini_id_seq'::regclass);
+
+
+--
+-- Name: pacchetto_tematico id_pacchetto; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.pacchetto_tematico ALTER COLUMN id_pacchetto SET DEFAULT nextval('public.pacchetto_tematico_id_pacchetto_seq'::regclass);
+
+
+--
+-- Name: prodotto id_prodotto; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.prodotto ALTER COLUMN id_prodotto SET DEFAULT nextval('public.prodotto_id_prodotto_seq'::regclass);
+
+
+--
+-- Name: tracking_ordine id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.tracking_ordine ALTER COLUMN id SET DEFAULT nextval('public.tracking_ordine_id_seq'::regclass);
+
+
+--
+-- Name: utenti id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.utenti ALTER COLUMN id SET DEFAULT nextval('public.utenti_id_seq'::regclass);
+
+
+--
+-- Name: visualizzazioni id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.visualizzazioni ALTER COLUMN id SET DEFAULT nextval('public.visualizzazioni_id_seq'::regclass);
+
+
+--
+-- Name: wish_list id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.wish_list ALTER COLUMN id SET DEFAULT nextval('public.wish_list_id_seq'::regclass);
+
+
+--
+-- Data for Name: carrello; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.carrello (id_carrello, id_utente, id_prodotto, quantita, data_aggiunta) FROM stdin;
+\.
+
+
+--
+-- Data for Name: carrello_pacchetto; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.carrello_pacchetto (id_utente, id_pacchetto, quantita) FROM stdin;
+\.
+
+
+--
+-- Data for Name: categoria; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.categoria (id_categoria, nome, descrizione, immagine) FROM stdin;
+1	Schede Video	GPU dedicate per gaming e rendering	schede_video.jpg
+2	Schede Madri	Motherboard compatibili con vari chipset e socket	schede_madri.jpg
+3	Case PC	Case per PC gaming e workstation	case_pc.jpg
+4	Alimentatori	PSU di varie potenze e certificazioni	alimentatori.jpg
+\.
+
+
+--
+-- Data for Name: coupon; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.coupon (id, codice, descrizione, tipo_sconto, valore_sconto, importo_minimo, data_inizio, data_scadenza, usi_massimi, usi_attuali, attivo, created_at, uso_singolo) FROM stdin;
+1	WELCOME10	Sconto 10% per nuovi clienti	percentuale	10.00	50.00	2024-01-01	2024-12-31	100	0	t	2025-10-09 15:32:39.420804	f
+2	NATALE2024	Sconto 15Ôé¼ per Natale	fisso	15.00	100.00	2024-12-01	2024-12-31	50	0	t	2025-10-09 15:32:39.420804	f
+3	ESTATE20	Sconto estivo 20%	percentuale	20.00	80.00	2024-06-01	2024-09-30	5	0	t	2025-10-09 15:32:39.420804	f
+5	WELCOME15	Benvenuto - 15Ôé¼ di sconto	fisso	15.00	50.00	2023-12-31	2025-12-30	50	15	t	2025-10-09 16:22:49.3791	f
+4	SCONTO10	Sconto 10% su tutto	percentuale	10.00	30.00	2023-12-31	2025-12-30	100	0	t	2025-10-09 16:22:49.3791	f
+6	NATALE20	Sconto Natale 20%	percentuale	20.00	100.00	2025-10-22	2025-10-31	100	9	t	2025-10-09 16:22:49.3791	t
+23	ciqo	Scheda video nvidia	percentuale	30.00	100.00	2025-10-25	2025-10-26	3	0	t	2025-10-25 15:47:49.536037	f
+\.
+
+
+--
+-- Data for Name: coupon_utilizzi; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.coupon_utilizzi (id, coupon_id, user_id, data_utilizzo) FROM stdin;
+\.
+
+
+--
+-- Data for Name: indirizzi; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.indirizzi (id, user_id, indirizzo, citta, cap, provincia, paese, predefinito, destinatario, telefono) FROM stdin;
+23	4	Via Giordano Bruno 15	Strongoli	88816	KR	Italia	f	Osama Abdouh	123123123123
+24	2	Via Giordano Bruno 15	Strongoli	88816	KR	Italia	t	Osama Abdouh	+39 3510662539
+29	3	Via Giordano Bruno 15	Strongoli	88816	KR	Italia	f	Pasquale Russo	\N
+30	5	Via Giordano Bruno 15	Strongoli	12312	KR	Italia	f	Pasquale Russo	\N
+31	2	Via Giordano Bruno 16	strongoli	21312	Cr	Italia	f	renzo albertini	3510662539
+18	1	Via Giordano Bruno 16	Strongoli	88816	KR	\N	f	Pasquale Russo	3123123123
+15	1	Via Giordano Bruno 15	Strongoli	88816	KR	Italia	t	Pasquale Russo	+39 3510662539
+\.
+
+
+--
+-- Data for Name: marchio; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.marchio (id_marchio, nome) FROM stdin;
+1	ASUS
+2	MSI
+3	Gigabyte
+4	Corsair
+5	NZXT
+\.
+
+
+--
+-- Data for Name: ordine_prodotti; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.ordine_prodotti (id, ordine_id, prodotto_id, quantita, prezzo, created_at) FROM stdin;
+99	83	14	4	399.99	2025-10-25 15:36:27.536429
+100	83	5	1	279.90	2025-10-25 15:36:27.536429
+101	83	16	1	189.90	2025-10-25 15:36:27.536429
+102	84	15	1	1199.99	2025-11-18 05:11:59.712094
+103	85	1	3	314.99	2025-11-18 16:10:50.705447
+104	86	15	1	1199.99	2025-11-18 16:38:15.829066
+105	87	4	1	183.20	2025-11-18 16:42:15.877993
+\.
+
+
+--
+-- Data for Name: ordini; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.ordini (id, user_id, indirizzo_consegna, totale, stato, data_ordine, coupon_id, sconto_coupon, totale_originale, metodo_pagamento, nome_intestatario, numero_carta_mascherato, coupon_utilizzato) FROM stdin;
+85	2	Osama Abdouh, Via Giordano Bruno 15, Strongoli 88816, KR	944.97	Spedito	2025-11-18 16:10:50.709769	\N	0.00	944.97	carta_credito	Pasquale Russo	**** **** **** 1212	\N
+86	2	Osama Abdouh, Via Giordano Bruno 15, Strongoli 88816, KR	1184.99	In lavorazione	2025-11-18 16:38:15.831967	\N	15.00	1199.99	carta_credito	Pasquale Russo	**** **** **** 3123	WELCOME15
+87	2	Osama Abdouh, Via Giordano Bruno 15, Strongoli 88816, KR	168.20	Spedito	2025-11-18 16:42:15.881708	\N	15.00	183.20	carta_credito	Pasquale Russo	**** **** **** 1231	WELCOME15
+83	2	Osama Abdouh, \n            Via Giordano Bruno 15, \n            Strongoli \n            88816, \n            KR	2069.76	In transito	2025-10-25 15:36:27.537	\N	0.00	2069.76	carta_credito	Pasquale Russo	**** **** **** 3234	\N
+84	2	Osama Abdouh, Via Giordano Bruno 15, Strongoli 88816, KR	1184.99	In lavorazione	2025-11-18 05:11:59.716812	\N	15.00	1199.99	carta_credito	Russo Pasquale	**** **** **** 3123	WELCOME15
+\.
+
+
+--
+-- Data for Name: pacchetto_tematico; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.pacchetto_tematico (id_pacchetto, nome, descrizione, prezzo_totale, immagine) FROM stdin;
+1	Gaming Starter Pack	Scheda video, alimentatore e case selezionati per iniziare a giocare	775.48	gaming_starter.jpg
+3	Streaming & Content Creation Pack	Soluzioni per creare contenuti: scheda video, microfono USB, scheda di acquisizione	367.68	streaming_pack.jpg
+2	Workstation Essentials	Componenti per una workstation affidabile: scheda madre, RAM aggiuntiva, SSD	2399.88	workstation_essentials.jpg
+\.
+
+
+--
+-- Data for Name: prodotto; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.prodotto (id_prodotto, nome, descrizione, prezzo, quantita_disponibile, id_categoria, id_marchio, immagine, in_vetrina, promo, bloccato, prezzo_scontato) FROM stdin;
+6	MSI MAG B650M Mortar WiFi	Scheda madre mATX per Ryzen 7000 con WiFi integrato	199.50	0	2	2	MSI_MAG_B650M.png	t	f	f	\N
+5	Gigabyte Z790 AORUS Elite AX	Scheda madre per CPU Intel di 13a generazione	279.90	8	2	3	gigabyte_aorus_z790.png	f	f	f	\N
+16	MSI B550 Tomahawk	Scheda madre AM4 con supporto PCIe 4.0	189.90	18	2	2	MSITomahawkB550.png	f	f	f	\N
+1	MSI RTX 4060 Ventus 2X	Scheda video con 8GB GDDR6, ideale per 1080p gaming	349.99	9	1	2	msi4060_2x.png	f	t	f	314.99
+15	ASUS ROG Strix RTX 4080	Scheda video gaming con 16GB GDDR6X	1499.99	24	1	1	ASUS_ROG_4080.png	t	t	f	1199.99
+10	Gigabyte P750GM	Alimentatore 750W, certificazione Gold, completamente modulare	109.90	17	4	3	Gigabyte-P750GM.png	f	t	f	98.91
+14	Gigabyte Vision GeForce RTX 3060 Ti	Scheda video 12GB pensata per creatori di contenuti	399.99	5	1	3	Gigabyte_vision_3060TI.png	f	f	f	\N
+4	ASUS TUF Gaming X570-Plus	Scheda madre AM4 con dissipazione potenziata	229.00	18	2	1	ASUS_TUF_X570-PLUS.png	f	t	f	183.2
+28	Asus Rog Astral RTX 5090	Scheda video nvidia	2399.99	8	1	1	RTX5090.png	f	f	t	\N
+9	MSI MPG GUNGNIR 110R	Case mid-tower con design elegante e vetro temperato	99.99	9	3	2	MSI_MPG_GUNGNIR_110R.png	f	t	f	89.99
+7	Corsair 4000D Airflow	Case ATX con eccellente gestione del flusso dÔÇÖaria	104.99	23	3	4	Corsair_4000D.png	t	t	f	94.49
+17	Corsair RM850x	Alimentatore modulare 850W, certificazione Gold	149.00	28	4	4	Corsair_RM850x.png	f	f	f	\N
+8	NZXT H5 Flow RGB	Case compatto con ventole RGB incluse	119.99	16	3	5	NZXT_H5_Flow_RGB.png	f	f	f	\N
+13	Corsair CX550F RGB	Alimentatore 550W con ventola RGB, ideale per build economiche	74.90	0	4	4	Corsair_CX550F_RGB.png	f	f	f	\N
+11	ASUS ROG Thor 1000W Platinum II	PSU di fascia alta con OLED e RGB, ultra silenzioso	299.00	2	4	1	ASUS_ROG_Thor_1000W_Platinum_II.png	f	f	f	\N
+19	Gigabyte RTX 4070 Gaming OC	Scheda video con 12GB GDDR6X	799.99	6	1	3	rtx4070gigabyte.png	f	f	f	\N
+3	ASUS Dual RX 7600	Scheda video AMD con 8GB GDDR6	289.99	7	1	1	AsusDual rx7600.png	f	t	f	260.99
+2	Gigabyte AORUS RTX 4090 Master	Top di gamma con raffreddamento avanzato, 24GB GDDR6X	1999.99	9	1	3	gigabyte_4090_aorus_master.png	f	f	f	\N
+\.
+
+
+--
+-- Data for Name: prodotto_pacchetto; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.prodotto_pacchetto (id_pacchetto, id_prodotto, quantita) FROM stdin;
+1	1	1
+1	3	1
+1	6	1
+2	2	1
+2	8	1
+3	4	1
+3	7	1
+3	9	1
+2	5	1
+\.
+
+
+--
+-- Data for Name: tracking_ordine; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.tracking_ordine (id, id_ordine, stato, corriere, codice_spedizione, dettagli_pacco, data_aggiornamento, indirizzo_spedizione) FROM stdin;
+23	83	In transito	dfsfds	ewrew	2025-10-25 13:42:33 dsfsdfsdf\n2025-10-25 13:43:12 sadsadas	2025-10-25 15:43:12.363477	Osama Abdouh, \n            Via Giordano Bruno 15, \n            Strongoli \n            88816, \n            KR
+24	85	Spedito	sda	asdsadd	2025-11-18 16:11:34.711872300 uscito dal magazzino	2025-11-18 16:11:34.71244	Osama Abdouh, Via Giordano Bruno 15, Strongoli 88816, KR
+25	87	Spedito	SDA	asdasdasd	2025-11-18 16:44:15.001088800 qwsda	2025-11-18 16:44:15.002334	Osama Abdouh, Via Giordano Bruno 15, Strongoli 88816, KR
+\.
+
+
+--
+-- Data for Name: utenti; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.utenti (id, nome, cognome, email, password, created_at, is_blocked, telefono, data_nascita, sesso, ruolo) FROM stdin;
+2	Pasquale	Russo	pasquale@example.com	$2a$10$oyVHW5awMen5q1.J5n4blu5/f8NLyK7wHXb2wfr2GVT0BWRLn9SrG	2025-10-03 16:46:19.198661	f	3510662539	2001-04-24	Maschio	owner
+1	Renzo	Albertini	renzo@example.com	$2b$10$bOnTRXKgE01VYNOE.Ie1negHf1LeAnwOiPENv.vapntgl6jwF.XXq	2025-10-03 16:46:01.126093	f	\N	\N	Maschio	owner
+11	Enrico	Favale	enrico@example.com	$2b$10$3XhSHe6U.xtUOcj1C/zJ/Og5PCZ/oKJXEWPEW4OGCxFFDWDILh3XS	2025-10-16 16:42:18.079953	f	\N	\N	\N	user
+9	Olindo	Falcone	olindo@example.com	$2b$10$rHaSZC2XJ2Ke1SZpdKSY0.y.5ToUwxztvE1k6VQ3UwBPGLaPfhUBm	2025-10-16 16:41:48.503136	f	\N	\N	\N	user
+5	Federica	Susinna	federica@example.com	$2b$10$A/R5njdORAC/CaCDzuXaB.NDmxVU.49Wf0XGC3CWFjr5HlvV5Qbca	2025-10-04 11:28:45.028131	f	\N	\N	\N	user
+4	Osama	Abdouh	osama@example.com	$2b$10$VgA5W27YJgrYNZ3W/lKIquNvjeF9rL7JqHEXu9T/CqRKCAkgR9ure	2025-10-03 16:46:48.044291	f	\N	\N	\N	admin
+14	Alessandro	Martino	alessandro@example.com	$2b$10$eoUhccGvAD6MVKq3L.BaVuc9/GCpyMAGMKoG3IhT8BL8avzAdoTkO	2025-10-16 16:47:01.403817	f	\N	\N	\N	user
+12	Chiara	Azzurra	chiara@example.com	$2b$10$3Gz5pOY8dyOCa3aqjSYSu.zi.LSX4TJy.hcJvv7k5iJzjxfUq10Ra	2025-10-16 16:43:21.903709	f	\N	\N	\N	user
+8	Pietro	Capalbo	pietro@example.com	$2b$10$nVX9OH.hgN9IQ3QGzE8ttuF6BJePQYbhIbc.jGaxHSDyjjMjs0hG2	2025-10-16 16:41:28.910833	f	\N	\N	\N	user
+10	Luigi	Brasacchio	luigi@example.com	$2b$10$Vz9rUbQM/tMxkDbL.EwFgef/KN7iB4OsblYWQk24n8BxriAH3oIdy	2025-10-16 16:42:02.047498	f	\N	\N	\N	user
+3	Imran	Waheed	imran@example.com	$2b$10$qKJZiaGt77Z1KXLTUc6.ae129FJqbkDt.Um9bbmaL1aPQgytjYaXW	2025-10-03 16:46:34.825876	f	\N	\N	\N	admin
+7	Piergaetano	Palella	piergaetano@example.com	$2b$10$UZKH1AhICKH/t1eNFxNPruHlw5yvZzd9ztlXA8zQqlzFw3GXe6FBq	2025-10-16 16:40:43.416918	f	\N	\N	\N	user
+13	Gaia	Rinaldi	gaia@example.com	$2b$10$mS1N71JFqnpiQVUwY93vGun3PZD0.YrVfZBh/S0Og9bOZ/QYAAcJa	2025-10-16 16:44:08.681921	f	\N	\N	\N	user
+\.
+
+
+--
+-- Data for Name: visualizzazioni; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.visualizzazioni (id, user_id, prodotto_id, visualizzato_at) FROM stdin;
+114	3	6	2025-10-25 13:17:55.331511
+115	5	15	2025-10-25 13:20:21.982048
+116	5	6	2025-10-25 13:20:24.708826
+119	2	19	2025-10-25 18:13:16.124748
+121	2	5	2025-11-08 18:45:27.240609
+124	2	8	2025-11-08 18:57:46.612874
+133	2	16	2025-11-18 05:11:34.788261
+125	2	15	2025-11-18 05:27:10.205966
+117	2	6	2025-11-18 16:14:57.647824
+123	2	14	2025-11-18 16:39:31.507789
+139	2	28	2025-11-18 16:43:13.78129
+\.
+
+
+--
+-- Data for Name: wish_list; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.wish_list (id, user_id, prodotto_id, aggiunto_il, quantita) FROM stdin;
+\.
+
+
+--
+-- Name: carrello_id_carrello_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.carrello_id_carrello_seq', 220, true);
+
+
+--
+-- Name: categoria_id_categoria_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.categoria_id_categoria_seq', 4, true);
+
+
+--
+-- Name: coupon_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.coupon_id_seq', 23, true);
+
+
+--
+-- Name: coupon_utilizzi_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.coupon_utilizzi_id_seq', 4, true);
+
+
+--
+-- Name: indirizzi_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.indirizzi_id_seq', 33, true);
+
+
+--
+-- Name: marchio_id_marchio_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.marchio_id_marchio_seq', 5, true);
+
+
+--
+-- Name: ordine_prodotti_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.ordine_prodotti_id_seq', 105, true);
+
+
+--
+-- Name: ordini_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.ordini_id_seq', 87, true);
+
+
+--
+-- Name: pacchetto_tematico_id_pacchetto_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.pacchetto_tematico_id_pacchetto_seq', 3, true);
+
+
+--
+-- Name: prodotto_id_prodotto_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.prodotto_id_prodotto_seq', 44, true);
+
+
+--
+-- Name: tracking_ordine_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.tracking_ordine_id_seq', 25, true);
+
+
+--
+-- Name: utenti_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.utenti_id_seq', 17, true);
+
+
+--
+-- Name: visualizzazioni_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.visualizzazioni_id_seq', 139, true);
+
+
+--
+-- Name: wish_list_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.wish_list_id_seq', 136, true);
+
+
+--
+-- Name: carrello_pacchetto carrello_pacchetto_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.carrello_pacchetto
+    ADD CONSTRAINT carrello_pacchetto_pkey PRIMARY KEY (id_utente, id_pacchetto);
+
+
+--
+-- Name: carrello carrello_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.carrello
+    ADD CONSTRAINT carrello_pkey PRIMARY KEY (id_carrello);
+
+
+--
+-- Name: categoria categoria_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.categoria
+    ADD CONSTRAINT categoria_pkey PRIMARY KEY (id_categoria);
+
+
+--
+-- Name: coupon coupon_codice_key; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.coupon
+    ADD CONSTRAINT coupon_codice_key UNIQUE (codice);
+
+
+--
+-- Name: coupon coupon_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.coupon
+    ADD CONSTRAINT coupon_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: coupon_utilizzi coupon_utilizzi_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.coupon_utilizzi
+    ADD CONSTRAINT coupon_utilizzi_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: indirizzi indirizzi_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.indirizzi
+    ADD CONSTRAINT indirizzi_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: marchio marchio_nome_key; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.marchio
+    ADD CONSTRAINT marchio_nome_key UNIQUE (nome);
+
+
+--
+-- Name: marchio marchio_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.marchio
+    ADD CONSTRAINT marchio_pkey PRIMARY KEY (id_marchio);
+
+
+--
+-- Name: ordine_prodotti ordine_prodotti_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.ordine_prodotti
+    ADD CONSTRAINT ordine_prodotti_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: ordini ordini_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.ordini
+    ADD CONSTRAINT ordini_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: pacchetto_tematico pacchetto_tematico_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.pacchetto_tematico
+    ADD CONSTRAINT pacchetto_tematico_pkey PRIMARY KEY (id_pacchetto);
+
+
+--
+-- Name: prodotto_pacchetto prodotto_pacchetto_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.prodotto_pacchetto
+    ADD CONSTRAINT prodotto_pacchetto_pkey PRIMARY KEY (id_pacchetto, id_prodotto);
+
+
+--
+-- Name: prodotto prodotto_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.prodotto
+    ADD CONSTRAINT prodotto_pkey PRIMARY KEY (id_prodotto);
+
+
+--
+-- Name: tracking_ordine tracking_ordine_id_ordine_unique; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.tracking_ordine
+    ADD CONSTRAINT tracking_ordine_id_ordine_unique UNIQUE (id_ordine);
+
+
+--
+-- Name: tracking_ordine tracking_ordine_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.tracking_ordine
+    ADD CONSTRAINT tracking_ordine_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: utenti utenti_email_key; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.utenti
+    ADD CONSTRAINT utenti_email_key UNIQUE (email);
+
+
+--
+-- Name: utenti utenti_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.utenti
+    ADD CONSTRAINT utenti_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: visualizzazioni visualizzazioni_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.visualizzazioni
+    ADD CONSTRAINT visualizzazioni_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: visualizzazioni visualizzazioni_user_prodotto_unique; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.visualizzazioni
+    ADD CONSTRAINT visualizzazioni_user_prodotto_unique UNIQUE (user_id, prodotto_id);
+
+
+--
+-- Name: wish_list wish_list_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.wish_list
+    ADD CONSTRAINT wish_list_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: wish_list wish_list_user_prodotto_unique; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.wish_list
+    ADD CONSTRAINT wish_list_user_prodotto_unique UNIQUE (user_id, prodotto_id);
+
+
+--
+-- Name: carrello carrello_id_prodotto_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.carrello
+    ADD CONSTRAINT carrello_id_prodotto_fkey FOREIGN KEY (id_prodotto) REFERENCES public.prodotto(id_prodotto) ON DELETE CASCADE;
+
+
+--
+-- Name: coupon_utilizzi coupon_utilizzi_coupon_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.coupon_utilizzi
+    ADD CONSTRAINT coupon_utilizzi_coupon_id_fkey FOREIGN KEY (coupon_id) REFERENCES public.coupon(id);
+
+
+--
+-- Name: coupon_utilizzi coupon_utilizzi_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.coupon_utilizzi
+    ADD CONSTRAINT coupon_utilizzi_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.utenti(id);
+
+
+--
+-- Name: indirizzi indirizzi_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.indirizzi
+    ADD CONSTRAINT indirizzi_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.utenti(id) ON DELETE CASCADE;
+
+
+--
+-- Name: ordine_prodotti ordine_prodotti_ordine_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.ordine_prodotti
+    ADD CONSTRAINT ordine_prodotti_ordine_id_fkey FOREIGN KEY (ordine_id) REFERENCES public.ordini(id) ON DELETE CASCADE;
+
+
+--
+-- Name: ordini ordini_coupon_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.ordini
+    ADD CONSTRAINT ordini_coupon_id_fkey FOREIGN KEY (coupon_id) REFERENCES public.coupon(id);
+
+
+--
+-- Name: ordini ordini_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.ordini
+    ADD CONSTRAINT ordini_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.utenti(id) ON DELETE CASCADE;
+
+
+--
+-- Name: prodotto prodotto_id_categoria_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.prodotto
+    ADD CONSTRAINT prodotto_id_categoria_fkey FOREIGN KEY (id_categoria) REFERENCES public.categoria(id_categoria) ON DELETE SET NULL;
+
+
+--
+-- Name: prodotto prodotto_id_marchio_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.prodotto
+    ADD CONSTRAINT prodotto_id_marchio_fkey FOREIGN KEY (id_marchio) REFERENCES public.marchio(id_marchio) ON DELETE SET NULL;
+
+
+--
+-- Name: prodotto_pacchetto prodotto_pacchetto_id_pacchetto_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.prodotto_pacchetto
+    ADD CONSTRAINT prodotto_pacchetto_id_pacchetto_fkey FOREIGN KEY (id_pacchetto) REFERENCES public.pacchetto_tematico(id_pacchetto) ON DELETE CASCADE;
+
+
+--
+-- Name: prodotto_pacchetto prodotto_pacchetto_id_prodotto_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.prodotto_pacchetto
+    ADD CONSTRAINT prodotto_pacchetto_id_prodotto_fkey FOREIGN KEY (id_prodotto) REFERENCES public.prodotto(id_prodotto) ON DELETE CASCADE;
+
+
+--
+-- Name: tracking_ordine tracking_ordine_id_ordine_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.tracking_ordine
+    ADD CONSTRAINT tracking_ordine_id_ordine_fkey FOREIGN KEY (id_ordine) REFERENCES public.ordini(id);
+
+
+--
+-- Name: visualizzazioni visualizzazioni_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.visualizzazioni
+    ADD CONSTRAINT visualizzazioni_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.utenti(id) ON DELETE CASCADE;
+
+
+--
+-- Name: wish_list wish_list_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.wish_list
+    ADD CONSTRAINT wish_list_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.utenti(id) ON DELETE CASCADE;
+
+
+--
+-- PostgreSQL database dump complete
+--
+
+\unrestrict wHtLdpPRcpSfEHT9cpuJ6Sm59NYHgoaxX7Unah5VmSjngIBgjyNexG6q8nmvoiV
+
